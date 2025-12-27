@@ -23,10 +23,14 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.2
-      - name: Setup tgenv
-        uses: tgenv/setup-tgenv@v1
-        with:
-          tgenv_version: 'v0.53.8'
+      
+      - name: Install tgenv
+        run: |
+          git clone https://github.com/tgenv/tgenv.git ~/.tgenv
+          echo "$HOME/.tgenv/bin" >> $GITHUB_PATH
+      
+      - name: Verify tgenv
+        run: tgenv --version
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
