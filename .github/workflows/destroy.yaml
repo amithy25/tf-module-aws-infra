@@ -1,0 +1,48 @@
+---
+name: Validate Pull Request Changes
+
+on:
+  workflow_dispatch:
+    inputs:
+      cluster-name:
+        description: "EKS Cluster Name to Destroy"
+        required: true
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write #required for oidc auth
+      contents: read
+  steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - name: Setup TFenv
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.2
+      - name: Setup tgenv
+        uses: tgenv/setup-tgenv@v1
+        with:
+          tgenv_version: 'v0.53.8'
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam:138775093046:role/skillupwithsachin-gha-terraform-svc-role
+          aws-region: us-east-1
+
+      - name: Run Terragrunt Destroy
+        working-directory: environments/dev/skillupwithsachin-eks-demo
+        run: |
+          tgenv install
+          tgenv use
+          terragrunt init
+          terragrunt destroy --terragrunt-non-interactive --auto-approve
+      
+      - name: Cleanup
+        run: |
+          rm -rf .terraform .terragrunt-cache
+      
