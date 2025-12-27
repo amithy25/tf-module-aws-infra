@@ -42,8 +42,6 @@ jobs:
       - name: Run Terragrunt Plan
         working-directory: environments/dev/skillupwithsachin-eks-demo
         run: |
-          tgenv install
-          tgenv use
           terragrunt init
           terragrunt plan --terragrunt-non-interactive
       
