@@ -28,7 +28,7 @@ variable "node_groups_config" {
 
     }
   }
-  description = "node groups configuration"
+  description = "node groups configuration."
 }
 
 variable "create_cluster_security_group" {
